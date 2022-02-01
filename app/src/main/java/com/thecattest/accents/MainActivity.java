@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         if ("аеиоуэюяы".contains(String.valueOf(c).toLowerCase(Locale.ROOT))) {
             textView.setTextColor(getResources().getColor(R.color.red));
             textView.setOnClickListener(v -> {
-                TransitionDrawable transition = (TransitionDrawable) getResources().getDrawable(Character.isUpperCase(c) ? R.drawable.correct : R.drawable.incorrect);
+                int colorId = Character.isUpperCase(c) ? R.drawable.correct : R.drawable.incorrect;
+                TransitionDrawable transition = (TransitionDrawable) getResources().getDrawable(colorId);
                 root.setBackground(transition);
                 transition.startTransition(400);
                 next();
