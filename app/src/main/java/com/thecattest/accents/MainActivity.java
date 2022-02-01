@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<String> words;
     private LinearLayout wordPlaceholder;
+    private TextView extra;
     private ConstraintLayout root;
 
     private final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -32,20 +33,22 @@ public class MainActivity extends AppCompatActivity {
         JSONResourceReader reader = new JSONResourceReader(getResources(), R.raw.accents);
         words = reader.constructUsingGson();
         wordPlaceholder = findViewById(R.id.wordPlaceholder);
+        extra = findViewById(R.id.extra);
         root = findViewById(R.id.root);
 
         next();
     }
 
     private void next() {
+        extra.setText("");
+        wordPlaceholder.removeAllViews();
         String word = words.get((int)(Math.random() * words.size()));
         if (word.contains("(")) {
             String[] split;
             split = word.split("\\(");
             word = split[0];
-            String extra = split[1];
+            extra.setText(split[1].substring(0, split[1].length() - 1));
         }
-        wordPlaceholder.removeAllViews();
         for (int i = 0; i < word.length(); i++) {
             char c = word.charAt(i);
             wordPlaceholder.addView(createTextView(c), layoutParams);

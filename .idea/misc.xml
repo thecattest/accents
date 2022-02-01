@@ -5,7 +5,8 @@
       <map>
         <entry key="app/src/main/res/drawable/correct.xml" value="0.1385" />
         <entry key="app/src/main/res/drawable/incorrect.xml" value="0.1385" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/random_word_widget.xml" value="0.33" />
       </map>
     </option>
   </component>
