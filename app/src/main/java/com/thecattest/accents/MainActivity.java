@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.TransitionDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,6 +71,14 @@ public class MainActivity extends AppCompatActivity {
         wordPlaceholder = findViewById(R.id.wordPlaceholder);
         commentPlaceholder = findViewById(R.id.extra);
         root = findViewById(R.id.root);
+        findViewById(R.id.author).setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.author_url)));
+            startActivity(browserIntent);
+        });
+        findViewById(R.id.dictionary).setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.dictionary_url)));
+            startActivity(browserIntent);
+        });
         MaterialToolbar toolbar = findViewById(R.id.topAppBar);
 
         toolbar.setOnMenuItemClickListener(this::onMenuItemClick);

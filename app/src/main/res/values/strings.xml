@@ -3,4 +3,8 @@
     <string name="title">@string/app_name</string>
     <string name="button_refresh">Синхронизировать список слов</string>
     <string name="button_forget">Забыть ошибки</string>
+    <string name="author">разработчик: <b>t.me/thecattest</b></string>
+    <string name="author_url">https://t.me/thecattest</string>
+    <string name="dictionary">словарь: <b>ctege.info</b></string>
+    <string name="dictionary_url">https://ctege.info/russkiy-yazyik-teoriya-ege/orfoepicheskiy-slovnik-minimum-ege-po-russkomu-yazyiku.html</string>
 </resources>
