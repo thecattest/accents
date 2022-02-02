@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView createTextView(String word, char c) {
         TextView textView = new TextView(MainActivity.this);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 50);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 42);
         textView.setPadding(2, 0, 2, 0);
         textView.setText(String.valueOf(c).toLowerCase(Locale.ROOT));
 
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     private void animateBackground(int colorId) {
         TransitionDrawable transition = (TransitionDrawable) getResources().getDrawable(colorId);
         root.setBackground(transition);
-        transition.startTransition(400);
+        transition.startTransition(200);
     }
 
     private void vibrate(int vibrationDuration) {
