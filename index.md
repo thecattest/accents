@@ -1,7 +1,7 @@
 # Приложение для тренировки ударений ЕГЭ
 Осознал, что почти не учу ударения для ЕГЭ, а надо бы. Не нашёл удобного приложения в PlayMarket, поэтому запилил собственное. 
-[Скачать](https://github.com/thecattest/accents/releases/download/v1.1/accents-thecattest-v1.1.apk)    
-![image](https://user-images.githubusercontent.com/57992909/152156859-f76bf8cc-47e8-4955-af53-4a153cca8e86.png)  
+[Скачать](https://cli.co/accents-thecattest-apk)  
+![image](https://user-images.githubusercontent.com/57992909/152184732-a38c993c-8b76-4d03-b4d6-bb7ec4a072d7.png)  
 QR-код для скачивания
 
 ## Главное преимущество - никаких нагромождений.
@@ -30,7 +30,7 @@ QR-код для скачивания
 <img src="https://user-images.githubusercontent.com/57992909/152148957-4fd6e0d0-7987-4dae-8404-9157035fbf6f.png" width="300" /> 
 
 # Пользуйтесь!
-[Скачать](https://github.com/thecattest/accents/releases/download/v1.1/accents-thecattest-v1.1.apk)  
+[Скачать](https://cli.co/accents-thecattest-apk)   
 ***P. S.** Ну разве не эстетика?*  
 <img src="https://user-images.githubusercontent.com/57992909/152149489-3f8dcf41-687f-4857-b491-29698bb4675a.png" width="300" /> 
 
