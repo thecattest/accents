@@ -30,8 +30,7 @@ QR-код для скачивания
 
 # Пользуйтесь!
 ***P. S.** Ну разве не эстетика?*  
-[Скачать](https://github.com/thecattest/accents/releases/download/v1.1/accents-thecattest-v1.1.apk)  
-
+[Скачать](https://cli.co/accents-thecattest-apk)  
 <img src="https://user-images.githubusercontent.com/57992909/152149489-3f8dcf41-687f-4857-b491-29698bb4675a.png" width="300" /> 
 
 
