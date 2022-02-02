@@ -3,10 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable-v24/ic_refresh_24.xml" value="0.2505" />
         <entry key="app/src/main/res/drawable/correct.xml" value="0.1385" />
         <entry key="app/src/main/res/drawable/incorrect.xml" value="0.1385" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="app/src/main/res/layout/random_word_widget.xml" value="0.33" />
+        <entry key="app/src/main/res/menu/main.xml" value="0.1" />
       </map>
     </option>
   </component>

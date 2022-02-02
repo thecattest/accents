@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/refresh"
+        android:title="@string/button_refresh"
+        android:icon="@drawable/ic_sync_24"
+        android:contentDescription="@string/button_refresh"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/forget"
+        android:title="@string/button_forget"
+        android:icon="@drawable/ic_forget_24"
+        android:contentDescription="@string/button_forget"
+        app:showAsAction="ifRoom" />
+
+</menu>
