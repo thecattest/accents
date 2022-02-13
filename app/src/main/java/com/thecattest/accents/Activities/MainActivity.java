@@ -1,17 +1,12 @@
-package com.thecattest.accents;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+package com.thecattest.accents.Activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
@@ -21,20 +16,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.thecattest.accents.Managers.FilesManager;
+import com.thecattest.accents.Managers.WordsManager;
+import com.thecattest.accents.R;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -43,14 +35,14 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    private long lastTimeBackPressed = 0;
+
     private ArrayList<String> words;
     private LinearLayout wordPlaceholder;
     private TextView commentPlaceholder;
     private ConstraintLayout root;
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private final String ACCENTS_FILENAME = "accents.json";
-    private final String MISTAKES_FILENAME = "mistakes.json";
+    private WordsManager wordsManager;
 
     private final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -59,14 +51,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String wordsJson = readFromFile(ACCENTS_FILENAME);
-        if (wordsJson.isEmpty()) {
-            Toast.makeText(this, "Loaded from resources", Toast.LENGTH_SHORT).show();
-            wordsJson = readFromRawResource(R.raw.accents);
-            writeToFile(wordsJson, ACCENTS_FILENAME);
-        }
-        Gson gson = new GsonBuilder().create();
-        words = gson.fromJson(wordsJson, new TypeToken<ArrayList<String>>(){}.getType());
+        wordsManager = new WordsManager(getApplicationContext());
+        words = wordsManager.readWords();
 
         wordPlaceholder = findViewById(R.id.wordPlaceholder);
         commentPlaceholder = findViewById(R.id.extra);
@@ -84,6 +70,17 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
 
         next();
+    }
+
+    @Override
+    public void onBackPressed() {
+        long currentTime = System.currentTimeMillis() / 1000L;
+        if (currentTime - lastTimeBackPressed <= 3) {
+            super.onBackPressed();
+        } else {
+            lastTimeBackPressed = currentTime;
+            Toast.makeText(this, R.string.back_again_to_exit, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void next() {
@@ -104,49 +101,12 @@ public class MainActivity extends AppCompatActivity {
         commentPlaceholder.setText(comment);
     }
 
-    private HashMap<String, Integer> getMistakes() {
-        String jsonString = readFromFile(MISTAKES_FILENAME);
-        if (jsonString == null || jsonString.isEmpty())
-            return new HashMap<>();
-        Gson gson = new GsonBuilder().create();
-        HashMap<String, Integer> mistakes = gson.fromJson(
-                jsonString, new TypeToken<HashMap<String, Integer>>(){}.getType());
-        Log.d("MISTAKES READ", mistakes.toString());
-        return mistakes;
-    }
-
-    private void setMistakes(HashMap<String, Integer> mistakes) {
-        Log.d("MISTAKES WRITE", mistakes.toString());
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(mistakes);
-        writeToFile(jsonString, MISTAKES_FILENAME);
-    }
-
-    private void mistakeInc(String mistake) {
-        HashMap<String, Integer> mistakes = getMistakes();
-        Integer count = mistakes.get(mistake);
-        count = count != null ? count : 2;
-        mistakes.put(mistake, count+1);
-        setMistakes(mistakes);
-    }
-
-    private void mistakeDec(String mistake) {
-        HashMap<String, Integer> mistakes = getMistakes();
-        Integer count = mistakes.get(mistake);
-        count = count != null ? count : 0;
-        if (count > 1)
-            mistakes.put(mistake, count-1);
-        else
-            mistakes.remove(mistake);
-        setMistakes(mistakes);
-    }
-
     private String getNextWord() {
-        HashMap<String, Integer> mistakes = getMistakes();
+        HashMap<String, Integer> mistakes = wordsManager.getMistakes();
         if (mistakes.size() != 0 && Math.random() < .1) {
             Object[] mistakesKeys = mistakes.keySet().toArray();
             String mistake = String.valueOf(mistakesKeys[(int)(Math.random() * mistakesKeys.length)]);
-            mistakeDec(mistake);
+            wordsManager.mistakeDec(mistake);
             return mistake;
         }
         return words.get((int)(Math.random() * words.size()));
@@ -166,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 if (Character.isUpperCase(c))
                     next();
                 else
-                    mistakeInc(word);
+                    wordsManager.mistakeInc(word);
             });
         } else
             textView.setTextColor(getResources().getColor(R.color.white));
@@ -196,66 +156,16 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (itemId == R.id.forget) {
-            setMistakes(new HashMap<>());
+            wordsManager.setMistakes(new HashMap<>());
             Toast.makeText(this, "Ошибки забыты", Toast.LENGTH_SHORT).show();
             return true;
         }
+        if (itemId == R.id.words) {
+            Intent i = new Intent(MainActivity.this, WordsListActivity.class);
+            startActivity(i);
+            return true;
+        }
         return false;
-    }
-
-    private void writeToFile(String data, String filename) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput(filename, Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("writer", "File write failed: " + e);
-        }
-    }
-
-    private String readFromRawResource(int resourceId) {
-        try {
-            InputStream inputStream = getResources().openRawResource(resourceId);
-            return readFromFile(inputStream);
-        } catch (FileNotFoundException e) {
-            Log.e("reader", "File not found: " + e);
-        } catch (IOException e) {
-            Log.e("reader", "Can not read file: " + e);
-        }
-        return "";
-    }
-
-    private String readFromFile(String fileName) {
-        try {
-            InputStream inputStream = openFileInput(fileName);
-            return readFromFile(inputStream);
-        } catch (FileNotFoundException e) {
-            Log.e("reader", "File not found: " + e);
-        } catch (IOException e) {
-            Log.e("reader", "Can not read file: " + e);
-        }
-        return "";
-    }
-
-    private String readFromFile(InputStream inputStream) throws IOException {
-        String ret = "{}";
-
-        if ( inputStream != null ) {
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String receiveString = "";
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while ( (receiveString = bufferedReader.readLine()) != null ) {
-                stringBuilder.append(receiveString);
-            }
-
-            inputStream.close();
-            ret = stringBuilder.toString();
-        }
-
-        return ret;
     }
 
     class DownloadFileFromURL extends AsyncTask<String, String, String> {
@@ -270,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
                 InputStream input = new BufferedInputStream(url.openStream());
 
-                OutputStream output = openFileOutput(ACCENTS_FILENAME, Context.MODE_PRIVATE);
+                OutputStream output = openFileOutput(FilesManager.ACCENTS_FILENAME, Context.MODE_PRIVATE);
 
                 byte[] data = new byte[1024];
 

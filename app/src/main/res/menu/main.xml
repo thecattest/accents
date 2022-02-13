@@ -2,6 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/words"
+        android:title="@string/button_words_list"
+        android:icon="@drawable/ic_list_24"
+        android:contentDescription="@string/button_words_list"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/refresh"
         android:title="@string/button_refresh"
         android:icon="@drawable/ic_sync_24"
@@ -13,6 +20,6 @@
         android:title="@string/button_forget"
         android:icon="@drawable/ic_forget_24"
         android:contentDescription="@string/button_forget"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
 </menu>
