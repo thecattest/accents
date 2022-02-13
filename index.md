@@ -27,7 +27,13 @@ QR-код для скачивания
 так что если я буду добавлять или редактировать слова, их можно будет просто скачать - переустанавливать приложение не придётся.  
 <img src="https://user-images.githubusercontent.com/57992909/152148664-a45bda96-0140-4ddb-aa80-82eaff908a3d.png" width="300" />  
 На всякий случай можно сбросить ошибки - и приложение будет как новенькое:   
-<img src="https://user-images.githubusercontent.com/57992909/152148957-4fd6e0d0-7987-4dae-8404-9157035fbf6f.png" width="300" /> 
+<img src="https://user-images.githubusercontent.com/57992909/152148957-4fd6e0d0-7987-4dae-8404-9157035fbf6f.png" width="300" />  
+
+### UPD: Добавил возможность просмотра слов в словаре
+<div>
+<img src="https://user-images.githubusercontent.com/57992909/153758212-2da1083c-4773-494e-a6f0-b950766a10ba.png" height="400">
+<img src="https://user-images.githubusercontent.com/57992909/153758084-c3dcfa66-aa20-4787-b9f3-46d20d20296e.png" height="400">
+<img src="https://user-images.githubusercontent.com/57992909/153758090-6538d608-f55a-427f-8b8e-41c4157ee79b.png" height="400"></div>
 
 # Пользуйтесь!
 [Скачать](https://cli.co/accents-thecattest-apk)   
