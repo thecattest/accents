@@ -11,7 +11,7 @@
     <item
         android:id="@+id/refresh"
         android:title="@string/button_refresh"
-        android:icon="@drawable/ic_sync_24"
+        android:icon="@drawable/ic_sync"
         android:contentDescription="@string/button_refresh"
         app:showAsAction="ifRoom" />
 

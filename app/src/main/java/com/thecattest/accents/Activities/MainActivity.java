@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         if ("аеиоуэюяы".contains(String.valueOf(c).toLowerCase(Locale.ROOT))) {
             textView.setTextColor(getResources().getColor(R.color.red));
             textView.setOnClickListener(view -> {
-                animateBackground(Character.isUpperCase(c) ? R.drawable.correct : R.drawable.incorrect);
+                //animateBackground(Character.isUpperCase(c) ? R.drawable.correct : R.drawable.incorrect);
                 vibrate(Character.isUpperCase(c) ? 15 : 200);
                 if (Character.isUpperCase(c)) {
                     wordsManager.updateQueue(word, madeMistake);
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     madeMistake = true;
             });
         } else
-            textView.setTextColor(getResources().getColor(R.color.white));
+            textView.setTextColor(getResources().getColor(R.color.black));
 
         return textView;
     }

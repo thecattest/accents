@@ -11,8 +11,10 @@
         <entry key="app/src/main/res/layout/activity_words_list.xml" value="0.25" />
         <entry key="app/src/main/res/layout/content_scrolling.xml" value="0.184375" />
         <entry key="app/src/main/res/layout/random_word_widget.xml" value="0.33" />
-        <entry key="app/src/main/res/menu/main.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/settings_activity.xml" value="0.35885416666666664" />
+        <entry key="app/src/main/res/menu/main.xml" value="0.33" />
         <entry key="app/src/main/res/menu/words_list.xml" value="0.21458333333333332" />
+        <entry key="app/src/main/res/xml/root_preferences.xml" value="0.35885416666666664" />
       </map>
     </option>
   </component>

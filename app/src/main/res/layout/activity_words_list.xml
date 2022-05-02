@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/button_words_list"
-            app:menu="@menu/words_list"
             app:navigationIcon="@drawable/ic_arrow_back_24"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             />
