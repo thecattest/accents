@@ -4,7 +4,7 @@
     <item
         android:id="@+id/words"
         android:title="@string/button_words_list"
-        android:icon="@drawable/ic_list_24"
+        android:icon="@drawable/ic_search_48"
         android:contentDescription="@string/button_words_list"
         app:showAsAction="ifRoom" />
 
