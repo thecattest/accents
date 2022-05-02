@@ -15,11 +15,11 @@
         android:contentDescription="@string/button_refresh"
         app:showAsAction="ifRoom" />
 
-    <item
+    <!--item
         android:id="@+id/forget"
         android:title="@string/button_forget"
         android:icon="@drawable/ic_forget_24"
         android:contentDescription="@string/button_forget"
-        app:showAsAction="never" />
+        app:showAsAction="never" /-->
 
 </menu>

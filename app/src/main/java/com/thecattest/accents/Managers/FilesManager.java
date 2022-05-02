@@ -21,14 +21,16 @@ public class FilesManager {
         this.context = context;
     }
 
-    public void writeToFile(String data, String filename) {
+    public boolean writeToFile(String data, String filename) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();
+            return true;
         }
         catch (IOException e) {
             Log.e("writer", "File write failed: " + e);
+            return false;
         }
     }
 

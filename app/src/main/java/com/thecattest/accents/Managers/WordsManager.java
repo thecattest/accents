@@ -1,73 +1,82 @@
 package com.thecattest.accents.Managers;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
+import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.thecattest.accents.Managers.FilesManager;
 import com.thecattest.accents.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedList;
 
 public class WordsManager {
 
-    private final Context context;
     private final FilesManager filesManager;
 
     public WordsManager(Context context) {
-        this.context = context;
         filesManager = new FilesManager(context);
     }
 
-    public ArrayList<String> readWords() {
+    public LinkedList<Pair<String, Integer>> getWords() {
         String wordsJson = filesManager.readFromFile(FilesManager.ACCENTS_FILENAME);
         if (wordsJson.isEmpty()) {
-            Toast.makeText(context, "Loaded from resources", Toast.LENGTH_SHORT).show();
-            wordsJson = filesManager.readFromRawResource(R.raw.accents);
-            filesManager.writeToFile(wordsJson, FilesManager.ACCENTS_FILENAME);
+            String wordsJsonFromResource = filesManager.readFromRawResource(R.raw.accents);
+            LinkedList<Pair<String, Integer>> words = getWordsFromResourceJson(wordsJsonFromResource);
+            writeWords(words);
+            return words;
         }
         Gson gson = new GsonBuilder().create();
-        return gson.fromJson(wordsJson, new TypeToken<ArrayList<String>>(){}.getType());
+        return gson.fromJson(wordsJson, new TypeToken<LinkedList<Pair<String, Integer>>>(){}.getType());
     }
 
-    public HashMap<String, Integer> getMistakes() {
-        String jsonString = filesManager.readFromFile(FilesManager.MISTAKES_FILENAME);
-        if (jsonString == null || jsonString.isEmpty())
-            return new HashMap<>();
+    public LinkedList<Pair<String, Integer>> getWordsFromResourceJson(String json) {
         Gson gson = new GsonBuilder().create();
-        HashMap<String, Integer> mistakes = gson.fromJson(
-                jsonString, new TypeToken<HashMap<String, Integer>>(){}.getType());
-        Log.d("MISTAKES READ", mistakes.toString());
-        return mistakes;
+        LinkedList<String> wordsFromResource = gson.fromJson(json, new TypeToken<LinkedList<String>>(){}.getType());
+        LinkedList<Pair<String, Integer>> words = new LinkedList<>();
+        for (String word : wordsFromResource)
+            words.add(new Pair<>(word, 0));
+        Collections.shuffle(words);
+        return words;
     }
 
-    public void setMistakes(HashMap<String, Integer> mistakes) {
-        Log.d("MISTAKES WRITE", mistakes.toString());
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(mistakes);
-        filesManager.writeToFile(jsonString, FilesManager.MISTAKES_FILENAME);
+    public ArrayList<String> getWordsOnly() {
+        LinkedList<Pair<String, Integer>> words = getWords();
+        ArrayList<String> wordsOnly = new ArrayList<>();
+        for (Pair<String, Integer> pair : words)
+            wordsOnly.add(pair.first);
+        return wordsOnly;
     }
 
-    public void mistakeInc(String mistake) {
-        HashMap<String, Integer> mistakes = getMistakes();
-        Integer count = mistakes.get(mistake);
-        count = count != null ? count : 2;
-        mistakes.put(mistake, count+1);
-        setMistakes(mistakes);
+    public void writeWords(LinkedList<Pair<String, Integer>> words) {
+        Gson gson = new GsonBuilder().create();
+        filesManager.writeToFile(gson.toJson(words), FilesManager.ACCENTS_FILENAME);
     }
 
-    public void mistakeDec(String mistake) {
-        HashMap<String, Integer> mistakes = getMistakes();
-        Integer count = mistakes.get(mistake);
-        count = count != null ? count : 0;
-        if (count > 1)
-            mistakes.put(mistake, count-1);
-        else
-            mistakes.remove(mistake);
-        setMistakes(mistakes);
+    public String getNextWord() {
+        return getWords().getFirst().first;
+    }
+
+    public void updateQueue(String word, boolean madeMistake) {
+        LinkedList<Pair<String, Integer>> words = getWords();
+        int wordIndex = -1;
+        for (int i = 0; i < words.size(); i++)
+            if (words.get(i).first.equals(word)) {
+                wordIndex = i;
+                break;
+            }
+        if (wordIndex != -1) {
+            Pair<String, Integer> wordMistakesPair = words.remove(wordIndex);
+            int mistakes = wordMistakesPair.second + (madeMistake ? 2 : -1);
+            int newWordIndex = (int)(Math.random() * 25) + 5;
+            if (mistakes <= 0) {
+                mistakes = 0;
+                newWordIndex = words.size() - newWordIndex;
+            }
+            words.add(newWordIndex, new Pair<>(word, mistakes));
+            writeWords(words);
+        }
     }
 }

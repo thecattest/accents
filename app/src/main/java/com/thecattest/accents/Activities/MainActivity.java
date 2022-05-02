@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.thecattest.accents.Managers.FilesManager;
@@ -25,6 +26,7 @@ import com.thecattest.accents.Managers.WordsManager;
 import com.thecattest.accents.R;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -37,10 +39,10 @@ public class MainActivity extends AppCompatActivity {
 
     private long lastTimeBackPressed = 0;
 
-    private ArrayList<String> words;
     private LinearLayout wordPlaceholder;
     private TextView commentPlaceholder;
     private ConstraintLayout root;
+    private boolean madeMistake;
 
     private WordsManager wordsManager;
 
@@ -52,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         wordsManager = new WordsManager(getApplicationContext());
-        words = wordsManager.readWords();
 
         wordPlaceholder = findViewById(R.id.wordPlaceholder);
         commentPlaceholder = findViewById(R.id.extra);
@@ -86,8 +87,9 @@ public class MainActivity extends AppCompatActivity {
     private void next() {
         commentPlaceholder.setText("");
         wordPlaceholder.removeAllViews();
+        madeMistake = false;
 
-        String fullWord = getNextWord();
+        String fullWord = wordsManager.getNextWord();
         String comment = "";
         String word = fullWord;
         if (fullWord.contains("(")) {
@@ -101,17 +103,6 @@ public class MainActivity extends AppCompatActivity {
         commentPlaceholder.setText(comment);
     }
 
-    private String getNextWord() {
-        HashMap<String, Integer> mistakes = wordsManager.getMistakes();
-        if (mistakes.size() != 0 && Math.random() < .1) {
-            Object[] mistakesKeys = mistakes.keySet().toArray();
-            String mistake = String.valueOf(mistakesKeys[(int)(Math.random() * mistakesKeys.length)]);
-            wordsManager.mistakeDec(mistake);
-            return mistake;
-        }
-        return words.get((int)(Math.random() * words.size()));
-    }
-
     private TextView createTextView(String word, char c) {
         TextView textView = new TextView(MainActivity.this);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 42);
@@ -123,10 +114,12 @@ public class MainActivity extends AppCompatActivity {
             textView.setOnClickListener(view -> {
                 animateBackground(Character.isUpperCase(c) ? R.drawable.correct : R.drawable.incorrect);
                 vibrate(Character.isUpperCase(c) ? 15 : 200);
-                if (Character.isUpperCase(c))
+                if (Character.isUpperCase(c)) {
+                    wordsManager.updateQueue(word, madeMistake);
                     next();
+                }
                 else
-                    wordsManager.mistakeInc(word);
+                    madeMistake = true;
             });
         } else
             textView.setTextColor(getResources().getColor(R.color.white));
@@ -135,9 +128,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void animateBackground(int colorId) {
-        TransitionDrawable transition = (TransitionDrawable) getResources().getDrawable(colorId);
-        root.setBackground(transition);
-        transition.startTransition(200);
+        TransitionDrawable transition = (TransitionDrawable) ResourcesCompat.getDrawable(getResources(), colorId, null);
+        if (transition != null) {
+            root.setBackground(transition);
+            transition.startTransition(200);
+        }
     }
 
     private void vibrate(int vibrationDuration) {
@@ -155,11 +150,11 @@ public class MainActivity extends AppCompatActivity {
             new DownloadFileFromURL().execute();
             return true;
         }
-        if (itemId == R.id.forget) {
-            wordsManager.setMistakes(new HashMap<>());
-            Toast.makeText(this, "Ошибки забыты", Toast.LENGTH_SHORT).show();
-            return true;
-        }
+//        if (itemId == R.id.forget) {
+//            wordsManager.setMistakes(new HashMap<>());
+//            Toast.makeText(this, "Ошибки забыты", Toast.LENGTH_SHORT).show();
+//            return true;
+//        }
         if (itemId == R.id.words) {
             Intent i = new Intent(MainActivity.this, WordsListActivity.class);
             startActivity(i);
@@ -180,7 +175,8 @@ public class MainActivity extends AppCompatActivity {
 
                 InputStream input = new BufferedInputStream(url.openStream());
 
-                OutputStream output = openFileOutput(FilesManager.ACCENTS_FILENAME, Context.MODE_PRIVATE);
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                // OutputStream output = openFileOutput(FilesManager.ACCENTS_FILENAME, Context.MODE_PRIVATE);
 
                 byte[] data = new byte[1024];
 
@@ -189,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 output.flush();
+                String wordsJson = output.toString();
+                wordsManager.writeWords(wordsManager.getWordsFromResourceJson(wordsJson));
 
                 output.close();
                 input.close();
