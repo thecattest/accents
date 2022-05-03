@@ -16,10 +16,10 @@ QR-код для скачивания
 ---
 ## Поиск по всему словарю приложения
 ### в одном клике от главной страницы.
-<img src="https://github.com/thecattest/accents/raw/master/screenshots/vocab-light.jpg" height="600">  
-
-Кнопка посередине - обновление словаря. В базе более 500 слов.  
-
+<img src="https://github.com/thecattest/accents/raw/master/screenshots/vocab-light.jpg" height="600">   
+ 
+Кнопка посередине - обновление словаря. В базе более 500 слов.    
+   
 <img src="https://user-images.githubusercontent.com/57992909/166425788-b8e53ec8-8ba7-4f55-802f-f41da04196b3.png">
 
 ---
