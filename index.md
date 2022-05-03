@@ -1,43 +1,36 @@
-# Приложение для тренировки ударений ЕГЭ
-Осознал, что почти не учу ударения для ЕГЭ, а надо бы. Не нашёл удобного приложения в PlayMarket, поэтому запилил собственное. 
-[Скачать](https://cli.co/accents-thecattest-apk)  
+# Уютное приложение для быстрого заучивания ударений ЕГЭ. [Скачать](https://cli.co/accents-thecattest-apk)  
 ![image](https://user-images.githubusercontent.com/57992909/152184732-a38c993c-8b76-4d03-b4d6-bb7ec4a072d7.png)  
 QR-код для скачивания
 
-## Главное преимущество - никаких нагромождений.
-На главном экране (экран в принципе единственный) сразу встречает слово, в котором нужно выбрать ударную букву.   
-<img src="https://user-images.githubusercontent.com/57992909/152146696-a6bd9843-42f7-4377-811d-3b7a7b7aa305.png" width="200" />  
-Нажимаются только гласные, при верном выборе экран мигает пастельным зелёным, телефон приятно вибрирует и переключает слово.  
-<img src="https://user-images.githubusercontent.com/57992909/152146864-fc02a886-d59e-4006-96f1-58f2c4fcfb28.png" width="200" />  
-В случае ошибки - суровая вибрация и красный пастельный фон на долю секунды. Слово остаётся на месте, пока не выберешь правильное ударение.  
-<img src="https://user-images.githubusercontent.com/57992909/152147177-42503941-c931-49a1-8070-d8abaae3118e.png" width="200" />  
+## Повторяй до 150 слов за 3 минуты -
+### ничего не будет тебя отвлекать.  
+Для выбора ударения нажми на гласную букву. Переход к следующему слову возможен только после правильного ответа. Мягкая вибрация подскажет об ошибке.
 
-Ошибки влияют на подбор слов в дальнейшем: слова, где была выбрана неправильная гласная, будут повторяться чаще других, 
-пока несколько раз подряд не будет выбрано правильное ударение
-
-## База слов
-Спарсил словарь с [ctege.info](https://ctege.info/russkiy-yazyik-teoriya-ege/orfoepicheskiy-slovnik-minimum-ege-po-russkomu-yazyiku.html).  
-Копирайт соблюден:  
-![image](https://user-images.githubusercontent.com/57992909/152148182-d7ab22ca-c6cd-4e03-b23b-76bb80d645a5.png)  
-![image](https://user-images.githubusercontent.com/57992909/152148850-42762a9a-de4c-4208-8fce-b33b7e7a53ee.png)  
-При нажатии открывается ссылка в браузере.
+<img src="https://github.com/thecattest/accents/raw/master/screenshots/main-light.jpg" height="600">  
 
 ---
-В базе около 500 слов. Сделал функцию синхронизации словаря с json файлом в этом репозитории, 
-так что если я буду добавлять или редактировать слова, их можно будет просто скачать - переустанавливать приложение не придётся.  
-<img src="https://user-images.githubusercontent.com/57992909/152148664-a45bda96-0140-4ddb-aa80-82eaff908a3d.png" width="300" />  
-На всякий случай можно сбросить ошибки - и приложение будет как новенькое:   
-<img src="https://user-images.githubusercontent.com/57992909/152148957-4fd6e0d0-7987-4dae-8404-9157035fbf6f.png" width="300" />  
+## Умная очередь поможет быстро исправить все ошибки -
+### слова, в которых ты ошибаешься, будут показываться чаще других.
 
-### UPD: Добавил возможность просмотра слов в словаре
+---
+## Поиск по всему словарю приложения
+### в одном клике от главной страницы.
+<img src="https://github.com/thecattest/accents/raw/master/screenshots/vocab-light.jpg" height="600">
+Кнопка посередине - обновление словаря. В базе более 500 слов.
+<img src="https://user-images.githubusercontent.com/57992909/166425788-b8e53ec8-8ba7-4f55-802f-f41da04196b3.png">
+
+---
+## Темная тема
+### для максимального комфорта.
 <div>
-<img src="https://user-images.githubusercontent.com/57992909/153758212-2da1083c-4773-494e-a6f0-b950766a10ba.png" height="400">
-<img src="https://user-images.githubusercontent.com/57992909/153758084-c3dcfa66-aa20-4787-b9f3-46d20d20296e.png" height="400">
-<img src="https://user-images.githubusercontent.com/57992909/153758090-6538d608-f55a-427f-8b8e-41c4157ee79b.png" height="400"></div>
+<img src="https://github.com/thecattest/accents/raw/master/screenshots/main-dark.jpg" height="600">
+<img src="https://github.com/thecattest/accents/raw/master/screenshots/vocab-dark.jpg" height="600">
+</div>
 
-# Пользуйтесь!
-[Скачать](https://cli.co/accents-thecattest-apk)   
-***P. S.** Ну разве не эстетика?*  
-<img src="https://user-images.githubusercontent.com/57992909/152149489-3f8dcf41-687f-4857-b491-29698bb4675a.png" width="300" /> 
+---
+# [Скачать приложение](https://cli.co/accents-thecattest-apk)  
+Словарь взят [ctege.info](https://ctege.info/russkiy-yazyik-teoriya-ege/orfoepicheskiy-slovnik-minimum-ege-po-russkomu-yazyiku.html) с соблюдением copyright: 
+![image](https://user-images.githubusercontent.com/57992909/166425522-deca4ab5-e33f-41d7-99a1-18818373ac0d.png) 
+
 
 
