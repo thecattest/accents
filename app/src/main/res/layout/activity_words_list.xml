@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/background"
     tools:context=".Activities.WordsListActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,7 +19,7 @@
             android:layout_height="?attr/actionBarSize"
             app:title="@string/button_words_list"
             app:navigationIcon="@drawable/ic_arrow_back_24"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            style="@style/Toolbar"
             />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -28,8 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/search_hint"
-        app:layout_constraintTop_toBottomOf="@id/topAppBarLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:layout_constraintTop_toBottomOf="@id/topAppBarLayout"
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="10dp"
         app:endIconMode="clear_text">
@@ -46,6 +47,8 @@
         android:id="@+id/wordsListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        tools:listitem="@layout/list_item"
+        android:layout_marginTop="5dp"
         app:layout_constraintTop_toBottomOf="@id/wordsSearchLayout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

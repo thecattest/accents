@@ -5,7 +5,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimaryVariant"
+    android:background="?attr/background"
     tools:context=".Activities.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -20,7 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             app:title="@string/title"
             app:menu="@menu/main"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            style="@style/Toolbar"
             />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -43,7 +43,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:textStyle="italic"
-        android:textColor="#666"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="26sp"/>
 
     <TextView
@@ -54,7 +54,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/author"
-        android:textColor="#ccc"
+        android:textColor="?attr/colorOnSecondary"
         android:layout_marginBottom="3dp"/>
     <TextView
         android:id="@+id/dictionary"
@@ -64,7 +64,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/dictionary"
-        android:textColor="#ccc"
+        android:textColor="?attr/colorOnSecondary"
         android:layout_marginBottom="10dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@ package com.thecattest.accents.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,25 +18,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
-import com.thecattest.accents.Managers.FilesManager;
 import com.thecattest.accents.Managers.WordsManager;
 import com.thecattest.accents.R;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String SHARED_PREF_KEY = "ACCENTS_SHARED_PREF";
+    public static final String THEME = "ACCENTS_SHARED_PREF_THEME";
+    public static final int THEME_DARK = 1;
+    public static final int THEME_LIGHT = 2;
 
     private long lastTimeBackPressed = 0;
 
@@ -69,6 +72,16 @@ public class MainActivity extends AppCompatActivity {
         MaterialToolbar toolbar = findViewById(R.id.topAppBar);
 
         toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
+        SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        int theme = sharedPref.getInt(THEME, THEME_LIGHT);
+        if(theme == THEME_DARK) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            toolbar.getMenu().getItem(2).setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_light, null));
+        }
+        else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            toolbar.getMenu().getItem(2).setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_dark, null));
+        }
 
         next();
     }
@@ -121,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 else
                     madeMistake = true;
             });
-        } else
-            textView.setTextColor(getResources().getColor(R.color.black));
+        }
 
         return textView;
     }
@@ -149,6 +161,18 @@ public class MainActivity extends AppCompatActivity {
         if (itemId == R.id.refresh) {
             new DownloadFileFromURL().execute();
             return true;
+        }
+        if (itemId == R.id.theme) {
+            SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                editor.putInt(THEME, THEME_LIGHT);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                editor.putInt(THEME, THEME_DARK);
+            }
+            editor.apply();
         }
 //        if (itemId == R.id.forget) {
 //            wordsManager.setMistakes(new HashMap<>());

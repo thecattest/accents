@@ -15,6 +15,13 @@
         android:contentDescription="@string/button_refresh"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/theme"
+        android:title="@string/theme"
+        android:icon="@drawable/ic_dark"
+        android:contentDescription="@string/theme"
+        app:showAsAction="ifRoom"/>
+
     <!--item
         android:id="@+id/forget"
         android:title="@string/button_forget"
