@@ -1,5 +1,5 @@
 # Уютное приложение для быстрого заучивания ударений ЕГЭ. [Скачать](https://cli.co/accents-thecattest-apk)  
-[telegram-канал с новостями](https://t.me/thecattests_projects) 
+[telegram-канал с новостями](https://t.me/thecattests_projects)  
 ![image](https://user-images.githubusercontent.com/57992909/152184732-a38c993c-8b76-4d03-b4d6-bb7ec4a072d7.png)  
 QR-код для скачивания
 
