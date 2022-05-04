@@ -33,6 +33,8 @@ public class WordsListActivity extends AppCompatActivity {
 
         wordsListView = findViewById(R.id.wordsListView);
         WordsManager wordsManager = new WordsManager(getApplicationContext());
+        int taskType = getIntent().getIntExtra(MainActivity.TASK_TYPE, WordsManager.TASK_TYPE_ACCENTS);
+        wordsManager.setTaskType(taskType);
         words = wordsManager.getWordsOnly();
         Collections.sort(words, (s1, s2) -> s1.toLowerCase(Locale.ROOT).compareTo(s2.toLowerCase(Locale.ROOT)));
         updateWords(words);

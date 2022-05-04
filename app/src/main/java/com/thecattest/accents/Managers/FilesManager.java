@@ -13,24 +13,23 @@ import java.io.OutputStreamWriter;
 public class FilesManager {
     private final Context context;
 
-    @SuppressWarnings("FieldCanBeLocal")
     public static final String ACCENTS_FILENAME = "accents.json";
-    public static final String MISTAKES_FILENAME = "mistakes.json";
+    public static final String ENDINGS_FILENAME = "endings.json";
+    public static final String ACCENTS_URL = "https://raw.githubusercontent.com/thecattest/accents/master/app/src/main/res/raw/accents.json";
+    public static final String ENDINGS_URL = "https://raw.githubusercontent.com/thecattest/accents/master/app/src/main/res/raw/endings.json";
 
     public FilesManager(Context context){
         this.context = context;
     }
 
-    public boolean writeToFile(String data, String filename) {
+    public void writeToFile(String data, String filename) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();
-            return true;
         }
         catch (IOException e) {
             Log.e("writer", "File write failed: " + e);
-            return false;
         }
     }
 

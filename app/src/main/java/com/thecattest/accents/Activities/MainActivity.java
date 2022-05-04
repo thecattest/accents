@@ -23,6 +23,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.tabs.TabLayout;
+import com.thecattest.accents.Managers.FilesManager;
 import com.thecattest.accents.Managers.WordsManager;
 import com.thecattest.accents.R;
 
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String THEME = "ACCENTS_SHARED_PREF_THEME";
     public static final int THEME_DARK = 1;
     public static final int THEME_LIGHT = 2;
+    public static final String TASK_TYPE = "TASK_TYPE";
 
     private long lastTimeBackPressed = 0;
 
@@ -61,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         wordPlaceholder = findViewById(R.id.wordPlaceholder);
         commentPlaceholder = findViewById(R.id.extra);
         root = findViewById(R.id.root);
+        TabLayout taskTypeNavigation = findViewById(R.id.taskTypeNavigation);
+        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
+
         findViewById(R.id.author).setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.author_url)));
             startActivity(browserIntent);
@@ -69,9 +75,30 @@ public class MainActivity extends AppCompatActivity {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.dictionary_url)));
             startActivity(browserIntent);
         });
-        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
 
         toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
+        taskTypeNavigation.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    wordsManager.setTaskType(WordsManager.TASK_TYPE_ACCENTS);
+                } else if (tab.getPosition() == 1) {
+                    wordsManager.setTaskType(WordsManager.TASK_TYPE_ENDINGS);
+                }
+                next();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         int theme = sharedPref.getInt(THEME, THEME_LIGHT);
         if(theme == THEME_DARK) {
@@ -103,31 +130,53 @@ public class MainActivity extends AppCompatActivity {
         madeMistake = false;
 
         String fullWord = wordsManager.getNextWord();
-        String comment = "";
-        String word = fullWord;
-        if (fullWord.contains("(")) {
-            String[] parts = fullWord.split("\\(");
-            word = parts[0];
-            comment = parts[1];
-            comment = comment.substring(0, comment.length() - 1);
+        int taskType = wordsManager.getTaskType();
+        if (taskType == WordsManager.TASK_TYPE_ACCENTS) {
+            String comment = "";
+            String word = fullWord;
+            if (fullWord.contains("(")) {
+                String[] parts = fullWord.split("\\(");
+                word = parts[0];
+                comment = parts[1];
+                comment = comment.substring(0, comment.length() - 1);
+            }
+            for (int i = 0; i < word.length(); i++) {
+                char c = word.charAt(i);
+                String lower = String.valueOf(c).toLowerCase(Locale.ROOT);
+                boolean clickable = "аеиоуэюяы".contains(lower);
+                boolean correct = Character.isUpperCase(c) && clickable;
+                wordPlaceholder.addView(createTextView(lower, fullWord, clickable, correct), layoutParams);
+            }
+            commentPlaceholder.setText(comment);
+        } else if (taskType == WordsManager.TASK_TYPE_ENDINGS) {
+            String[] parts = fullWord.substring(0, fullWord.length() - 1).split("\\(");
+            wordPlaceholder.addView(createTextView(parts[0] + "("), layoutParams);
+            String[] options = parts[1].split("/");
+            for (int i = 0; i < options.length; i++) {
+                wordPlaceholder.addView(createTextView(options[i], fullWord, true, i == 0), layoutParams);
+                if (i != options.length - 1)
+                    wordPlaceholder.addView(createTextView("/"), layoutParams);
+            }
+            wordPlaceholder.addView(createTextView(")"), layoutParams);
         }
-        for (int i = 0; i < word.length(); i++)
-            wordPlaceholder.addView(createTextView(fullWord, word.charAt(i)), layoutParams);
-        commentPlaceholder.setText(comment);
     }
 
-    private TextView createTextView(String word, char c) {
+    private TextView createTextView(String part) {
+        return createTextView(part, "", false, false);
+    }
+
+    private TextView createTextView(String part, String word, boolean clickable, boolean correct) {
         TextView textView = new TextView(MainActivity.this);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 42);
         textView.setPadding(2, 0, 2, 0);
-        textView.setText(String.valueOf(c).toLowerCase(Locale.ROOT));
+        textView.setText(part);
 
-        if ("аеиоуэюяы".contains(String.valueOf(c).toLowerCase(Locale.ROOT))) {
+        if (clickable) {
             textView.setTextColor(getResources().getColor(R.color.red));
             textView.setOnClickListener(view -> {
                 //animateBackground(Character.isUpperCase(c) ? R.drawable.correct : R.drawable.incorrect);
-                vibrate(Character.isUpperCase(c) ? 15 : 200);
-                if (Character.isUpperCase(c)) {
+                vibrate(correct ? 15 : 200);
+                if (correct) {
                     wordsManager.updateQueue(word, madeMistake);
                     next();
                 }
@@ -135,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
                     madeMistake = true;
             });
         }
-
         return textView;
     }
 
@@ -174,13 +222,9 @@ public class MainActivity extends AppCompatActivity {
             }
             editor.apply();
         }
-//        if (itemId == R.id.forget) {
-//            wordsManager.setMistakes(new HashMap<>());
-//            Toast.makeText(this, "Ошибки забыты", Toast.LENGTH_SHORT).show();
-//            return true;
-//        }
         if (itemId == R.id.words) {
             Intent i = new Intent(MainActivity.this, WordsListActivity.class);
+            i.putExtra(TASK_TYPE, wordsManager.getTaskType());
             startActivity(i);
             return true;
         }
@@ -193,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... args) {
             int count;
             try {
-                URL url = new URL("https://raw.githubusercontent.com/thecattest/accents/master/app/src/main/res/raw/accents.json");
+                URL url = new URL(wordsManager.getSyncURL());
                 URLConnection connection = url.openConnection();
                 connection.connect();
 

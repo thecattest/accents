@@ -14,16 +14,54 @@ import java.util.LinkedList;
 
 public class WordsManager {
 
+    public static final int TASK_TYPE_ACCENTS = 1;
+    public static final int TASK_TYPE_ENDINGS = 2;
+
     private final FilesManager filesManager;
+    private int taskType = TASK_TYPE_ACCENTS;
 
     public WordsManager(Context context) {
         filesManager = new FilesManager(context);
     }
 
+    public void setTaskType(int newTaskType) {
+        if (newTaskType == TASK_TYPE_ACCENTS)
+            taskType = TASK_TYPE_ACCENTS;
+        else if (newTaskType == TASK_TYPE_ENDINGS)
+            taskType = TASK_TYPE_ENDINGS;
+        else
+            throw new IllegalArgumentException("Wrong task type");
+    }
+
+    public int getTaskType() {
+        return taskType;
+    }
+
+    private String getFilename() {
+        if (taskType == TASK_TYPE_ACCENTS)
+            return FilesManager.ACCENTS_FILENAME;
+        else
+            return FilesManager.ENDINGS_FILENAME;
+    }
+
+    public String getSyncURL() {
+        if (taskType == TASK_TYPE_ACCENTS)
+            return FilesManager.ACCENTS_URL;
+        else
+            return FilesManager.ENDINGS_URL;
+    }
+
+    private int getRawId() {
+        if (taskType == TASK_TYPE_ACCENTS)
+            return R.raw.accents;
+        else
+            return R.raw.endings;
+    }
+
     public LinkedList<Pair<String, Integer>> getWords() {
-        String wordsJson = filesManager.readFromFile(FilesManager.ACCENTS_FILENAME);
+        String wordsJson = filesManager.readFromFile(getFilename());
         if (wordsJson.isEmpty()) {
-            String wordsJsonFromResource = filesManager.readFromRawResource(R.raw.accents);
+            String wordsJsonFromResource = filesManager.readFromRawResource(getRawId());
             LinkedList<Pair<String, Integer>> words = getWordsFromResourceJson(wordsJsonFromResource);
             writeWords(words);
             return words;
@@ -45,14 +83,21 @@ public class WordsManager {
     public ArrayList<String> getWordsOnly() {
         LinkedList<Pair<String, Integer>> words = getWords();
         ArrayList<String> wordsOnly = new ArrayList<>();
-        for (Pair<String, Integer> pair : words)
-            wordsOnly.add(pair.first);
+        for (Pair<String, Integer> pair : words) {
+            if (taskType == TASK_TYPE_ACCENTS)
+                wordsOnly.add(pair.first);
+            else {
+                String[] parts = pair.first.split("\\(");
+                String end = parts[1].split("/")[0];
+                wordsOnly.add(parts[0] + end);
+            }
+        }
         return wordsOnly;
     }
 
     public void writeWords(LinkedList<Pair<String, Integer>> words) {
         Gson gson = new GsonBuilder().create();
-        filesManager.writeToFile(gson.toJson(words), FilesManager.ACCENTS_FILENAME);
+        filesManager.writeToFile(gson.toJson(words), getFilename());
     }
 
     public String getNextWord() {

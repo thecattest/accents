@@ -12,4 +12,6 @@
     <string name="search_hint">Поиск</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="theme">Сменить тему</string>
+    <string name="task_type_navigation_accents">ударения</string>
+    <string name="task_type_navigation_endings">Окончания</string>
 </resources>
