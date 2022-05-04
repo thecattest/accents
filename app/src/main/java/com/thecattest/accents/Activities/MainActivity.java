@@ -33,6 +33,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -151,10 +154,13 @@ public class MainActivity extends AppCompatActivity {
         } else if (taskType == WordsManager.TASK_TYPE_ENDINGS) {
             String[] parts = fullWord.substring(0, fullWord.length() - 1).split("\\(");
             wordPlaceholder.addView(createTextView(parts[0] + "("), layoutParams);
-            String[] options = parts[1].split("/");
-            for (int i = 0; i < options.length; i++) {
-                wordPlaceholder.addView(createTextView(options[i], fullWord, true, i == 0), layoutParams);
-                if (i != options.length - 1)
+            String[] optionsArray = parts[1].split("/");
+            ArrayList<String> options = new ArrayList<>(Arrays.asList(optionsArray));
+            Collections.shuffle(options);
+            for (int i = 0; i < options.size(); i++) {
+                String word = options.get(i);
+                wordPlaceholder.addView(createTextView(word, fullWord, true, optionsArray[0].equals(word)), layoutParams);
+                if (i != options.size() - 1)
                     wordPlaceholder.addView(createTextView("/"), layoutParams);
             }
             wordPlaceholder.addView(createTextView(")"), layoutParams);
