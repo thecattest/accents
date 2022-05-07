@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
         initRetrofit();
         initCategoriesNavigation();
+        sync();
 
         SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         int theme = sharedPref.getInt(THEME, THEME_LIGHT);
@@ -208,26 +209,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean onMenuItemClick(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.refresh) {
-            Call<Dictionary> call = apiService.getDictionary();
-            call.enqueue(new Callback<Dictionary>() {
-                @Override
-                public void onResponse(Call<Dictionary> call, Response<Dictionary> response) {
-                    dictionary = response.body();
-                    try {
-                        dictionary.sync(jsonManager);
-                        initCategoriesNavigation();
-                        next();
-                        Toast.makeText(MainActivity.this, R.string.synced, Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        Toast.makeText(MainActivity.this, R.string.ioexception, Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Dictionary> call, Throwable t) {
-                    Toast.makeText(MainActivity.this, R.string.sync_request_error, Toast.LENGTH_SHORT).show();
-                }
-            });
+            sync();
             return true;
         }
         if (itemId == R.id.theme) {
@@ -249,6 +231,29 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    public void sync() {
+        Call<Dictionary> call = apiService.getDictionary();
+        call.enqueue(new Callback<Dictionary>() {
+            @Override
+            public void onResponse(Call<Dictionary> call, Response<Dictionary> response) {
+                dictionary = response.body();
+                try {
+                    dictionary.sync(jsonManager);
+                    initCategoriesNavigation();
+                    next();
+                    Toast.makeText(MainActivity.this, R.string.synced, Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    Toast.makeText(MainActivity.this, R.string.ioexception, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Dictionary> call, Throwable t) {
+                Toast.makeText(MainActivity.this, R.string.sync_request_error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public View.OnClickListener getTextViewClickListener(String task, boolean correct) {
