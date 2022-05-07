@@ -58,7 +58,7 @@ public class Category {
         try {
             queue = jsonManager.readObjectFromFile(
                     getFilename(), new Queue());
-            syncQueue(queue, jsonManager);
+            queue = syncQueue(queue, jsonManager);
         } catch (FileNotFoundException e) {
             queue = new Queue().sync(this);
             saveQueue(queue, jsonManager);
@@ -70,11 +70,13 @@ public class Category {
         jsonManager.writeObjectToFile(queue, getFilename());
     }
 
-    public void syncQueue(Queue queue, JSONManager jsonManager) {
+    public Queue syncQueue(Queue queue, JSONManager jsonManager) {
         if (queue.hash.isEmpty() || !queue.hash.equals(hash)) {
             Queue newQueue = queue.sync(this);
             saveQueue(newQueue, jsonManager);
+            return newQueue;
         }
+        return queue;
     }
 
     public void syncQueue(JSONManager jsonManager) throws IOException {
