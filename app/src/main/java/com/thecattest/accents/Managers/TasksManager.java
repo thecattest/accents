@@ -47,7 +47,7 @@ public class TasksManager {
             textViews.add(createTextView(mainActivity, parts[0] + "("));
             String[] optionsArray = parts[1].split("/");
             ArrayList<String> options = new ArrayList<>(Arrays.asList(optionsArray));
-            Collections.shuffle(options);
+            Collections.sort(options);
             for (int i = 0; i < options.size(); i++) {
                 String word = options.get(i);
                 textViews.add(
