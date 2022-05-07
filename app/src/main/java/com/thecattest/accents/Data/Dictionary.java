@@ -9,7 +9,7 @@ public class Dictionary {
 
     public static final String FILENAME = "dictionary.json";
     public static final String BASE_URL = "https://raw.githubusercontent.com";
-    public static final String SYNC_URL = "/thecattest/accents/universal-dictionary/app/src/main/res/raw/dictionary.json";
+    public static final String SYNC_URL = "/thecattest/accents/dictionary/dictionary.json";
 
     public ArrayList<Category> categories;
 
