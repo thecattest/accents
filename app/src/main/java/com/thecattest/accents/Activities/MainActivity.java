@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -25,19 +24,21 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
-import com.thecattest.accents.Managers.FilesManager;
-import com.thecattest.accents.Managers.WordsManager;
+import com.thecattest.accents.Data.Category;
+import com.thecattest.accents.Data.Dictionary;
+import com.thecattest.accents.Managers.JSONManager;
+import com.thecattest.accents.Managers.TasksManager;
 import com.thecattest.accents.R;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,16 +46,20 @@ public class MainActivity extends AppCompatActivity {
     public static final String THEME = "ACCENTS_SHARED_PREF_THEME";
     public static final int THEME_DARK = 1;
     public static final int THEME_LIGHT = 2;
-    public static final String TASK_TYPE = "TASK_TYPE";
+    public static final String CATEGORY_TITLE = "CATEGORY_TITLE";
 
     private long lastTimeBackPressed = 0;
 
     private LinearLayout wordPlaceholder;
     private TextView commentPlaceholder;
     private ConstraintLayout root;
+    private TabLayout categoriesNavigation;
+    private MaterialToolbar toolbar;
     private boolean madeMistake;
 
-    private WordsManager wordsManager;
+    private Dictionary dictionary;
+    private Category category;
+    private JSONManager jsonManager;
 
     private final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -63,45 +68,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        wordsManager = new WordsManager(getApplicationContext());
+        jsonManager = new JSONManager(this);
+        try {
+            dictionary = jsonManager.readObjectFromFile(Dictionary.FILENAME, new Dictionary());
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, "dictionary not found", Toast.LENGTH_SHORT).show();
+            dictionary = jsonManager.gson.fromJson(
+                    jsonManager.filesManager.readFromRawResource(R.raw.dictionary),
+                    Dictionary.class);
+            jsonManager.writeObjectToFile(dictionary, Dictionary.FILENAME);
+        } catch (IOException e) {
+            Toast.makeText(this, R.string.ioexception, Toast.LENGTH_SHORT).show();
+            dictionary = jsonManager.gson.fromJson(
+                    jsonManager.filesManager.readFromRawResource(R.raw.dictionary),
+                    Dictionary.class);
+            jsonManager.writeObjectToFile(dictionary, Dictionary.FILENAME);
+        }
+        category = dictionary.categories.get(0);
+        Log.d("Dictionary", jsonManager.gson.toJson(dictionary));
 
-        wordPlaceholder = findViewById(R.id.wordPlaceholder);
-        commentPlaceholder = findViewById(R.id.extra);
-        root = findViewById(R.id.root);
-        TabLayout taskTypeNavigation = findViewById(R.id.taskTypeNavigation);
-        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
+        findViews();
+        setListeners();
 
-        findViewById(R.id.author).setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.author_url)));
-            startActivity(browserIntent);
-        });
-        findViewById(R.id.dictionary).setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.dictionary_url)));
-            startActivity(browserIntent);
-        });
-
-        toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
-        taskTypeNavigation.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    wordsManager.setTaskType(WordsManager.TASK_TYPE_ACCENTS);
-                } else if (tab.getPosition() == 1) {
-                    wordsManager.setTaskType(WordsManager.TASK_TYPE_ENDINGS);
-                }
-                next();
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+        ArrayList<String> titles = dictionary.getCategoriesTitles();
+        Log.d("Nav", titles.toString());
+        for (String categoryTitle : titles)
+            categoriesNavigation.addTab(categoriesNavigation.newTab().setText(categoryTitle));
+        Log.d("Nav", "Nav created");
 
         SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         int theme = sharedPref.getInt(THEME, THEME_LIGHT);
@@ -117,6 +110,38 @@ public class MainActivity extends AppCompatActivity {
         next();
     }
 
+    public void findViews() {
+        wordPlaceholder = findViewById(R.id.wordPlaceholder);
+        commentPlaceholder = findViewById(R.id.extra);
+        root = findViewById(R.id.root);
+        categoriesNavigation = findViewById(R.id.categoriesNavigation);
+        toolbar = findViewById(R.id.topAppBar);
+    }
+
+    public void setListeners() {
+        findViewById(R.id.author).setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.author_url)));
+            startActivity(browserIntent);
+        });
+        findViewById(R.id.dictionary).setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.dictionary_url)));
+            startActivity(browserIntent);
+        });
+
+        toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
+
+        categoriesNavigation.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                String tabText = (String) tab.getText();
+                category = dictionary.getCategory(tabText);
+                next();
+            }
+            public void onTabUnselected(TabLayout.Tab tab) { }
+            public void onTabReselected(TabLayout.Tab tab) { }
+        });
+    }
+
     @Override
     public void onBackPressed() {
         long currentTime = System.currentTimeMillis() / 1000L;
@@ -124,74 +149,25 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         } else {
             lastTimeBackPressed = currentTime;
-            Toast.makeText(this, R.string.back_again_to_exit, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.ioexception, Toast.LENGTH_LONG).show();
         }
     }
 
     private void next() {
-        commentPlaceholder.setText("");
+        String task;
+        try {
+            task = category.next(jsonManager);
+        } catch (IOException e) {
+            Toast.makeText(this, R.string.ioexception, Toast.LENGTH_LONG).show();
+            return;
+        }
+        
+        commentPlaceholder.setText(TasksManager.getComment(task, category.getTaskType()));
         wordPlaceholder.removeAllViews();
         madeMistake = false;
-
-        String fullWord = wordsManager.getNextWord();
-        int taskType = wordsManager.getTaskType();
-        if (taskType == WordsManager.TASK_TYPE_ACCENTS) {
-            String comment = "";
-            String word = fullWord;
-            if (fullWord.contains("(")) {
-                String[] parts = fullWord.split("\\(");
-                word = parts[0];
-                comment = parts[1];
-                comment = comment.substring(0, comment.length() - 1);
-            }
-            for (int i = 0; i < word.length(); i++) {
-                char c = word.charAt(i);
-                String lower = String.valueOf(c).toLowerCase(Locale.ROOT);
-                boolean clickable = "аеиоуэюяы".contains(lower);
-                boolean correct = Character.isUpperCase(c) && clickable;
-                wordPlaceholder.addView(createTextView(lower, fullWord, clickable, correct), layoutParams);
-            }
-            commentPlaceholder.setText(comment);
-        } else if (taskType == WordsManager.TASK_TYPE_ENDINGS) {
-            String[] parts = fullWord.substring(0, fullWord.length() - 1).split("\\(");
-            wordPlaceholder.addView(createTextView(parts[0] + "("), layoutParams);
-            String[] optionsArray = parts[1].split("/");
-            ArrayList<String> options = new ArrayList<>(Arrays.asList(optionsArray));
-            Collections.shuffle(options);
-            for (int i = 0; i < options.size(); i++) {
-                String word = options.get(i);
-                wordPlaceholder.addView(createTextView(word, fullWord, true, optionsArray[0].equals(word)), layoutParams);
-                if (i != options.size() - 1)
-                    wordPlaceholder.addView(createTextView("/"), layoutParams);
-            }
-            wordPlaceholder.addView(createTextView(")"), layoutParams);
-        }
-    }
-
-    private TextView createTextView(String part) {
-        return createTextView(part, "", false, false);
-    }
-
-    private TextView createTextView(String part, String word, boolean clickable, boolean correct) {
-        TextView textView = new TextView(MainActivity.this);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 42);
-        textView.setPadding(2, 0, 2, 0);
-        textView.setText(part);
-
-        if (clickable) {
-            textView.setTextColor(getResources().getColor(R.color.red));
-            textView.setOnClickListener(view -> {
-                //animateBackground(Character.isUpperCase(c) ? R.drawable.correct : R.drawable.incorrect);
-                vibrate(correct ? 15 : 200);
-                if (correct) {
-                    wordsManager.updateQueue(word, madeMistake);
-                    next();
-                }
-                else
-                    madeMistake = true;
-            });
-        }
-        return textView;
+        
+        for (TextView tv : TasksManager.getTextViews(this, task, category.getTaskType()))
+            wordPlaceholder.addView(tv, layoutParams);
     }
 
     private void animateBackground(int colorId) {
@@ -231,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (itemId == R.id.words) {
             Intent i = new Intent(MainActivity.this, WordsListActivity.class);
-            i.putExtra(TASK_TYPE, wordsManager.getTaskType());
+            i.putExtra(CATEGORY_TITLE, category.getTitle());
             startActivity(i);
             return true;
         }
@@ -243,7 +219,11 @@ public class MainActivity extends AppCompatActivity {
             //animateBackground(Character.isUpperCase(c) ? R.drawable.correct : R.drawable.incorrect);
             vibrate(correct ? 15 : 200);
             if (correct) {
-                wordsManager.updateQueue(task, madeMistake);
+                try {
+                    category.saveAnswer(task, madeMistake, jsonManager);
+                } catch (IOException e) {
+                    Toast.makeText(this, R.string.ioexception, Toast.LENGTH_LONG).show();
+                }
                 next();
             }
             else
@@ -257,24 +237,21 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... args) {
             int count;
             try {
-                URL url = new URL(wordsManager.getSyncURL());
+                URL url = new URL(Dictionary.SYNC_URL);
                 URLConnection connection = url.openConnection();
                 connection.connect();
 
                 InputStream input = new BufferedInputStream(url.openStream());
-
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
-                // OutputStream output = openFileOutput(FilesManager.ACCENTS_FILENAME, Context.MODE_PRIVATE);
-
                 byte[] data = new byte[1024];
-
                 while ((count = input.read(data)) != -1) {
                     output.write(data, 0, count);
                 }
 
                 output.flush();
-                String wordsJson = output.toString();
-                wordsManager.writeWords(wordsManager.getWordsFromResourceJson(wordsJson));
+                String dictionaryJson = output.toString();
+                // dictionary = jsonManager.gson.fromJson(dictionaryJson, Dictionary.class);
+                // dictionary.sync(jsonManager);
 
                 output.close();
                 input.close();

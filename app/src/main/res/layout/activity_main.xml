@@ -26,24 +26,10 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/taskTypeNavigation"
+        android:id="@+id/categoriesNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/topAppBarLayout">
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/taskTypeAccents"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/task_type_navigation_accents" />
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/taskTypeEndings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/task_type_navigation_endings" />
-
-    </com.google.android.material.tabs.TabLayout>
+        app:layout_constraintTop_toBottomOf="@id/topAppBarLayout" />
 
     <LinearLayout
         android:id="@+id/wordPlaceholder"
@@ -53,7 +39,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/taskTypeNavigation" />
+        app:layout_constraintTop_toBottomOf="@id/categoriesNavigation" />
 
     <TextView
         android:id="@+id/extra"

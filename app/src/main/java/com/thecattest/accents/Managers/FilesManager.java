@@ -13,11 +13,6 @@ import java.io.OutputStreamWriter;
 public class FilesManager {
     private final Context context;
 
-    public static final String ACCENTS_FILENAME = "accents.json";
-    public static final String ENDINGS_FILENAME = "endings.json";
-    public static final String ACCENTS_URL = "https://raw.githubusercontent.com/thecattest/accents/master/app/src/main/res/raw/accents.json";
-    public static final String ENDINGS_URL = "https://raw.githubusercontent.com/thecattest/accents/master/app/src/main/res/raw/endings.json";
-
     public FilesManager(Context context){
         this.context = context;
     }
@@ -45,20 +40,13 @@ public class FilesManager {
         return "";
     }
 
-    public String readFromFile(String fileName) {
-        try {
-            InputStream inputStream = context.openFileInput(fileName);
-            return readFromFile(inputStream);
-        } catch (FileNotFoundException e) {
-            Log.e("reader", "File not found: " + e);
-        } catch (IOException e) {
-            Log.e("reader", "Can not read file: " + e);
-        }
-        return "";
+    public String readFromFile(String fileName) throws FileNotFoundException, IOException {
+        InputStream inputStream = context.openFileInput(fileName);
+        return readFromFile(inputStream);
     }
 
-    public String readFromFile(InputStream inputStream) throws IOException {
-        String ret = "{}";
+    public String readFromFile(InputStream inputStream) throws FileNotFoundException, IOException {
+        String ret = null;
 
         if ( inputStream != null ) {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);

@@ -1,8 +1,11 @@
 package com.thecattest.accents.Data;
 
+import android.util.Log;
+
 import com.thecattest.accents.Managers.JSONManager;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Category {
@@ -10,13 +13,11 @@ public class Category {
     public static final int TASK_TYPE_ACCENTS = 1;
     public static final int TASK_TYPE_ENDINGS = 2;
 
-    private int id;
-    private String hash;
-    private String title;
-    private int taskType;
-    private ArrayList<String> tasks;
-
-    private JSONManager jsonManager = null;
+    public int id;
+    public String hash;
+    public String title;
+    public int taskType;
+    public ArrayList<String> tasks;
 
     public int getId() { return id; }
 
@@ -28,20 +29,17 @@ public class Category {
 
     public ArrayList<String> getTasks() { return tasks; }
 
-    public void setJsonManager(JSONManager jsonManager) {
-        this.jsonManager = jsonManager;
-    }
-
     public String getFilename() {
         return getId() + ".json";
     }
 
-    public String next() {
-        return loadQueue().next();
+    public String next(JSONManager jsonManager) throws IOException {
+        Queue queue = loadQueue(jsonManager);
+        return queue.next();
     }
 
-    public void saveAnswer(String task, boolean madeMistake) {
-        Queue queue = loadQueue();
+    public void saveAnswer(String task, boolean madeMistake, JSONManager jsonManager) throws IOException {
+        Queue queue = loadQueue(jsonManager);
         Object mistakesObj = queue.mistakes.get(task);
         int mistakes = mistakesObj == null ? 0 : (int) mistakesObj;
         mistakes = mistakes + (madeMistake ? 2 : -1);
@@ -54,33 +52,36 @@ public class Category {
         }
         queue.tasks.remove(task);
         queue.tasks.add(newWordIndex, task);
-        saveQueue(queue);
+        saveQueue(queue, jsonManager);
     }
 
-    public Queue loadQueue() {
-        if (jsonManager == null)
-            throw new NullPointerException("set json manager to continue");
+    public Queue loadQueue(JSONManager jsonManager) throws IOException {
         Queue queue;
         try {
             queue = jsonManager.readObjectFromFile(
                     getFilename(), new Queue());
+            syncQueue(queue, jsonManager);
         } catch (FileNotFoundException e) {
-            queue = new Queue();
-            queue.sync(this);
-            saveQueue(queue);
+            queue = new Queue().sync(this);
+            saveQueue(queue, jsonManager);
         }
+        Log.d("queue", queue.tasks.toString());
         return queue;
     }
 
-    public void saveQueue(Queue queue) {
-        if (jsonManager == null)
-            throw new NullPointerException("set json manager to continue");
+    public void saveQueue(Queue queue, JSONManager jsonManager) {
         jsonManager.writeObjectToFile(queue, getFilename());
     }
 
-    public void syncQueue() {
-        Queue queue = loadQueue();
-        Queue newQueue = queue.sync(this);
-        saveQueue(newQueue);
+    public void syncQueue(Queue queue, JSONManager jsonManager) {
+        if (queue.hash.isEmpty() || !queue.hash.equals(hash)) {
+            Queue newQueue = queue.sync(this);
+            saveQueue(newQueue, jsonManager);
+        }
+    }
+
+    public void syncQueue(JSONManager jsonManager) throws IOException {
+        Queue queue = loadQueue(jsonManager);
+        syncQueue(queue, jsonManager);
     }
 }

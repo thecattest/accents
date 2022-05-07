@@ -75,9 +75,7 @@ public class TasksManager {
 
         if (clickable) {
             textView.setTextColor(mainActivity.getResources().getColor(R.color.red));
-            textView.setOnClickListener(view ->
-                    mainActivity.getTextViewClickListener(task, correct)
-            );
+            textView.setOnClickListener(mainActivity.getTextViewClickListener(task, correct));
         }
         return textView;
     }

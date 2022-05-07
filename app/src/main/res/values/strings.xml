@@ -8,6 +8,7 @@
     <string name="dictionary">словарь: <b>ctege.info</b></string>
     <string name="dictionary_url">https://ctege.info/russkiy-yazyik-teoriya-ege/orfoepicheskiy-slovnik-minimum-ege-po-russkomu-yazyiku.html</string>
     <string name="back_again_to_exit">Нажмите ещё раз, чтобы выйти</string>
+    <string name="ioexception">Ошибка чтения или записи в файлы. Свяжитесь с разработчиком</string>
     <string name="button_words_list">Список слов</string>
     <string name="search_hint">Поиск</string>
     <string name="title_activity_settings">SettingsActivity</string>
