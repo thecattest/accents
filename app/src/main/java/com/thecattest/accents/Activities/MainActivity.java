@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         } else {
             lastTimeBackPressed = currentTime;
-            Toast.makeText(this, R.string.ioexception, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.back_again_to_exit, Toast.LENGTH_SHORT).show();
         }
     }
 

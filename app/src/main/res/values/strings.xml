@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ударения ЕГЭ</string>
+    <string name="app_name">ЕГЭ - Русский</string>
     <string name="title">@string/app_name</string>
     <string name="button_refresh">Синхронизировать список слов</string>
     <string name="button_forget">Забыть ошибки</string>
