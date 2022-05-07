@@ -13,6 +13,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -235,6 +236,19 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    public View.OnClickListener getTextViewClickListener(String task, boolean correct) {
+        return view -> {
+            //animateBackground(Character.isUpperCase(c) ? R.drawable.correct : R.drawable.incorrect);
+            vibrate(correct ? 15 : 200);
+            if (correct) {
+                wordsManager.updateQueue(task, madeMistake);
+                next();
+            }
+            else
+                madeMistake = true;
+        };
     }
 
     class DownloadFileFromURL extends AsyncTask<String, String, String> {
