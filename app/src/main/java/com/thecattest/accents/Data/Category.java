@@ -1,7 +1,5 @@
 package com.thecattest.accents.Data;
 
-import android.util.Log;
-
 import com.thecattest.accents.Managers.JSONManager;
 
 import java.io.FileNotFoundException;
@@ -65,7 +63,6 @@ public class Category {
             queue = new Queue().sync(this);
             saveQueue(queue, jsonManager);
         }
-        Log.d("queue", queue.tasks.toString());
         return queue;
     }
 

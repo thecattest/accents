@@ -15,4 +15,6 @@
     <string name="theme">Сменить тему</string>
     <string name="task_type_navigation_accents">ударения</string>
     <string name="task_type_navigation_endings">Окончания</string>
+    <string name="sync_request_error">Ошибка отправки запроса</string>
+    <string name="synced">Синхронизировано</string>
 </resources>

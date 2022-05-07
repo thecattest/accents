@@ -29,7 +29,9 @@
         android:id="@+id/categoriesNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/topAppBarLayout" />
+        app:layout_constraintTop_toBottomOf="@id/topAppBarLayout"
+        app:tabMode="scrollable"
+        app:tabGravity="center"/>
 
     <LinearLayout
         android:id="@+id/wordPlaceholder"

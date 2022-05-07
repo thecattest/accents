@@ -8,7 +8,8 @@ import java.util.ArrayList;
 public class Dictionary {
 
     public static final String FILENAME = "dictionary.json";
-    public static final String SYNC_URL = "https://raw.githubusercontent.com/thecattest/accents/master/app/src/main/res/raw/accents.json";
+    public static final String BASE_URL = "https://raw.githubusercontent.com";
+    public static final String SYNC_URL = "/thecattest/accents/universal-dictionary/app/src/main/res/raw/dictionary.json";
 
     public ArrayList<Category> categories;
 
@@ -29,5 +30,6 @@ public class Dictionary {
     public void sync(JSONManager jsonManager) throws IOException {
         for (Category category : categories)
             category.syncQueue(jsonManager);
+        jsonManager.writeObjectToFile(this, Dictionary.FILENAME);
     }
 }

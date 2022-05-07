@@ -24,6 +24,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
+import com.thecattest.accents.Data.ApiService;
 import com.thecattest.accents.Data.Category;
 import com.thecattest.accents.Data.Dictionary;
 import com.thecattest.accents.Managers.JSONManager;
@@ -38,7 +39,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     private Dictionary dictionary;
     private Category category;
     private JSONManager jsonManager;
+    private Retrofit retrofit;
+    private ApiService apiService;
 
     private final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             dictionary = jsonManager.readObjectFromFile(Dictionary.FILENAME, new Dictionary());
         } catch (FileNotFoundException e) {
-            Toast.makeText(this, "dictionary not found", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "dictionary not found", Toast.LENGTH_SHORT).show();
             dictionary = jsonManager.gson.fromJson(
                     jsonManager.filesManager.readFromRawResource(R.raw.dictionary),
                     Dictionary.class);
@@ -84,17 +92,11 @@ public class MainActivity extends AppCompatActivity {
                     Dictionary.class);
             jsonManager.writeObjectToFile(dictionary, Dictionary.FILENAME);
         }
-        category = dictionary.categories.get(0);
-        Log.d("Dictionary", jsonManager.gson.toJson(dictionary));
 
         findViews();
         setListeners();
-
-        ArrayList<String> titles = dictionary.getCategoriesTitles();
-        Log.d("Nav", titles.toString());
-        for (String categoryTitle : titles)
-            categoriesNavigation.addTab(categoriesNavigation.newTab().setText(categoryTitle));
-        Log.d("Nav", "Nav created");
+        initRetrofit();
+        initCategoriesNavigation();
 
         SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         int theme = sharedPref.getInt(THEME, THEME_LIGHT);
@@ -108,6 +110,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         next();
+    }
+
+    private void initCategoriesNavigation() {
+        ArrayList<String> titles = dictionary.getCategoriesTitles();
+        categoriesNavigation.removeAllTabs();
+        for (String categoryTitle : titles)
+            categoriesNavigation.addTab(categoriesNavigation.newTab().setText(categoryTitle));
+        category = dictionary.categories.get(0);
+    }
+
+    private void initRetrofit() {
+        retrofit = new Retrofit.Builder()
+                .baseUrl(Dictionary.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        apiService = retrofit.create(ApiService.class);
     }
 
     public void findViews() {
@@ -190,7 +208,26 @@ public class MainActivity extends AppCompatActivity {
     private boolean onMenuItemClick(MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.refresh) {
-            new DownloadFileFromURL().execute();
+            Call<Dictionary> call = apiService.getDictionary();
+            call.enqueue(new Callback<Dictionary>() {
+                @Override
+                public void onResponse(Call<Dictionary> call, Response<Dictionary> response) {
+                    dictionary = response.body();
+                    try {
+                        dictionary.sync(jsonManager);
+                        initCategoriesNavigation();
+                        next();
+                        Toast.makeText(MainActivity.this, R.string.synced, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Toast.makeText(MainActivity.this, R.string.ioexception, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Dictionary> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, R.string.sync_request_error, Toast.LENGTH_SHORT).show();
+                }
+            });
             return true;
         }
         if (itemId == R.id.theme) {
@@ -229,46 +266,6 @@ public class MainActivity extends AppCompatActivity {
             else
                 madeMistake = true;
         };
-    }
-
-    class DownloadFileFromURL extends AsyncTask<String, String, String> {
-
-        @Override
-        protected String doInBackground(String... args) {
-            int count;
-            try {
-                URL url = new URL(Dictionary.SYNC_URL);
-                URLConnection connection = url.openConnection();
-                connection.connect();
-
-                InputStream input = new BufferedInputStream(url.openStream());
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                byte[] data = new byte[1024];
-                while ((count = input.read(data)) != -1) {
-                    output.write(data, 0, count);
-                }
-
-                output.flush();
-                String dictionaryJson = output.toString();
-                // dictionary = jsonManager.gson.fromJson(dictionaryJson, Dictionary.class);
-                // dictionary.sync(jsonManager);
-
-                output.close();
-                input.close();
-
-            } catch (Exception e) {
-                Log.e("Error: ", e.getMessage());
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            Toast.makeText(MainActivity.this, "Синхронизировано", Toast.LENGTH_SHORT).show();
-            next();
-        }
     }
 
 }
