@@ -55,8 +55,7 @@ public class Category {
             queue.mistakes.put(task, mistakes);
         }
         queue.tasks.remove(task);
-        // queue.tasks.add(newWordIndex, task);
-        queue.tasks.add(queue.tasks.size(), task);
+        queue.tasks.add(newWordIndex, task);
         saveQueue(queue, jsonManager);
     }
 
