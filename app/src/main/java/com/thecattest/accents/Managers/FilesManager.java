@@ -40,12 +40,12 @@ public class FilesManager {
         return "";
     }
 
-    public String readFromFile(String fileName) throws FileNotFoundException, IOException {
+    public String readFromFile(String fileName) throws IOException {
         InputStream inputStream = context.openFileInput(fileName);
         return readFromFile(inputStream);
     }
 
-    public String readFromFile(InputStream inputStream) throws FileNotFoundException, IOException {
+    public String readFromFile(InputStream inputStream) throws IOException {
         String ret = null;
 
         if ( inputStream != null ) {

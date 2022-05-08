@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -31,13 +29,7 @@ import com.thecattest.accents.Managers.JSONManager;
 import com.thecattest.accents.Managers.TasksManager;
 import com.thecattest.accents.R;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -79,14 +71,8 @@ public class MainActivity extends AppCompatActivity {
         jsonManager = new JSONManager(this);
         try {
             dictionary = jsonManager.readObjectFromFile(Dictionary.FILENAME, new Dictionary());
-        } catch (FileNotFoundException e) {
-            // Toast.makeText(this, "dictionary not found", Toast.LENGTH_SHORT).show();
-            dictionary = jsonManager.gson.fromJson(
-                    jsonManager.filesManager.readFromRawResource(R.raw.dictionary),
-                    Dictionary.class);
-            jsonManager.writeObjectToFile(dictionary, Dictionary.FILENAME);
         } catch (IOException e) {
-            Toast.makeText(this, R.string.ioexception, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, R.string.ioexception, Toast.LENGTH_SHORT).show();
             dictionary = jsonManager.gson.fromJson(
                     jsonManager.filesManager.readFromRawResource(R.raw.dictionary),
                     Dictionary.class);

@@ -1,5 +1,7 @@
 package com.thecattest.accents.Data;
 
+import androidx.annotation.Nullable;
+
 import com.thecattest.accents.Managers.JSONManager;
 
 import java.io.FileNotFoundException;
@@ -33,11 +35,15 @@ public class Category {
 
     public String next(JSONManager jsonManager) throws IOException {
         Queue queue = loadQueue(jsonManager);
+        if (queue == null)
+            queue = syncQueue(jsonManager);
         return queue.next();
     }
 
     public void saveAnswer(String task, boolean madeMistake, JSONManager jsonManager) throws IOException {
         Queue queue = loadQueue(jsonManager);
+        if (queue == null)
+            queue = syncQueue(jsonManager);
         Object mistakesObj = queue.mistakes.get(task);
         int mistakes = mistakesObj == null ? 0 : (int) mistakesObj;
         mistakes = mistakes + (madeMistake ? 2 : -1);
@@ -49,19 +55,19 @@ public class Category {
             queue.mistakes.put(task, mistakes);
         }
         queue.tasks.remove(task);
-        queue.tasks.add(newWordIndex, task);
+        // queue.tasks.add(newWordIndex, task);
+        queue.tasks.add(queue.tasks.size(), task);
         saveQueue(queue, jsonManager);
     }
 
-    public Queue loadQueue(JSONManager jsonManager) throws IOException {
+    @Nullable
+    public Queue loadQueue(JSONManager jsonManager) {
         Queue queue;
         try {
             queue = jsonManager.readObjectFromFile(
                     getFilename(), new Queue());
-            queue = syncQueue(queue, jsonManager);
-        } catch (FileNotFoundException e) {
-            queue = new Queue().sync(this);
-            saveQueue(queue, jsonManager);
+        } catch (IOException e) {
+            queue = null;
         }
         return queue;
     }
@@ -70,17 +76,12 @@ public class Category {
         jsonManager.writeObjectToFile(queue, getFilename());
     }
 
-    public Queue syncQueue(Queue queue, JSONManager jsonManager) {
-        if (queue.hash.isEmpty() || !queue.hash.equals(hash)) {
-            Queue newQueue = queue.sync(this);
-            saveQueue(newQueue, jsonManager);
-            return newQueue;
-        }
-        return queue;
-    }
-
-    public void syncQueue(JSONManager jsonManager) throws IOException {
+    public Queue syncQueue(JSONManager jsonManager) {
         Queue queue = loadQueue(jsonManager);
-        syncQueue(queue, jsonManager);
+        if (queue == null)
+            queue = new Queue();
+        Queue syncedQueue = queue.sync(this);
+        saveQueue(syncedQueue, jsonManager);
+        return syncedQueue;
     }
 }

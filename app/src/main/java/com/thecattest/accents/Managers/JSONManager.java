@@ -22,7 +22,7 @@ public class JSONManager {
         filesManager.writeToFile(gson.toJson(object), filename);
     }
 
-    public <T> T readObjectFromFile(String filename, T objectClass) throws FileNotFoundException, IOException {
+    public <T> T readObjectFromFile(String filename, T objectClass) throws IOException {
         String json = filesManager.readFromFile(filename);
         return gson.fromJson(json, (Type) objectClass.getClass());
     }

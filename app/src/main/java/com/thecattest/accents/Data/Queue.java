@@ -1,5 +1,6 @@
 package com.thecattest.accents.Data;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -18,14 +19,15 @@ public class Queue {
             newQueue.hash = category.hash;
             LinkedList<String> newTasks = new LinkedList<>(category.getTasks());
             for (int i = 0; i < tasks.size(); i++) {
-                String oldTask = tasks.removeFirst();
+                String oldTask = tasks.removeLast();
                 if (newTasks.contains(oldTask)) {
-                    newQueue.tasks.add(oldTask);
-                    newTasks.removeFirst();
+                    newQueue.tasks.add(0, oldTask);
+                    newTasks.remove(oldTask);
                     if (mistakes.containsKey(oldTask))
                         newQueue.mistakes.put(oldTask, mistakes.get(oldTask));
                 }
             }
+            Collections.reverse(newTasks);
             for (String newTask : newTasks)
                 newQueue.tasks.add(0, newTask);
             return newQueue;

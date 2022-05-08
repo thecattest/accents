@@ -28,8 +28,9 @@ public class Dictionary {
     }
 
     public void sync(JSONManager jsonManager) throws IOException {
-        for (Category category : categories)
-            category.syncQueue(jsonManager);
         jsonManager.writeObjectToFile(this, Dictionary.FILENAME);
+        for (Category category : categories) {
+            category.syncQueue(jsonManager);
+        }
     }
 }
