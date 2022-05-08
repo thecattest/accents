@@ -55,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private MaterialToolbar toolbar;
     private boolean madeMistake;
 
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
+
     private Dictionary dictionary;
     private Category category;
     private JSONManager jsonManager;
@@ -85,15 +88,16 @@ public class MainActivity extends AppCompatActivity {
         initCategoriesNavigation();
         sync();
 
-        SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        sharedPref  = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
         int theme = sharedPref.getInt(THEME, THEME_LIGHT);
         if(theme == THEME_DARK) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            toolbar.getMenu().getItem(2).setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_light, null));
+            toolbar.getMenu().getItem(1).setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_light, null));
         }
         else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            toolbar.getMenu().getItem(2).setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_dark, null));
+            toolbar.getMenu().getItem(1).setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_dark, null));
         }
 
         next();
@@ -199,8 +203,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (itemId == R.id.theme) {
-            SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
             if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 editor.putInt(THEME, THEME_LIGHT);
