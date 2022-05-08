@@ -9,8 +9,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +43,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     public static final String SHARED_PREF_KEY = "ACCENTS_SHARED_PREF";
-    public static final String THEME = "ACCENTS_SHARED_PREF_THEME";
+    public static final String THEME = "THEME";
+    public static final String SCALE = "SCALE";
     public static final int THEME_DARK = 1;
     public static final int THEME_LIGHT = 2;
     public static final String CATEGORY_TITLE = "CATEGORY_TITLE";
@@ -53,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout root;
     private TabLayout categoriesNavigation;
     private MaterialToolbar toolbar;
+    private ImageButton zoomIn;
+    private ImageButton zoomOut;
+    private ImageButton restore;
+    private int scale;
     private boolean madeMistake;
 
     private SharedPreferences sharedPref;
@@ -90,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPref  = getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
         editor = sharedPref.edit();
+        scale = sharedPref.getInt(SCALE, 0);
         int theme = sharedPref.getInt(THEME, THEME_LIGHT);
         if(theme == THEME_DARK) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -125,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
         root = findViewById(R.id.root);
         categoriesNavigation = findViewById(R.id.categoriesNavigation);
         toolbar = findViewById(R.id.topAppBar);
+        zoomIn = findViewById(R.id.zoom_in);
+        zoomOut = findViewById(R.id.zoom_out);
+        restore = findViewById(R.id.zoom_restore);
     }
 
     public void setListeners() {
@@ -136,6 +147,10 @@ public class MainActivity extends AppCompatActivity {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.dictionary_url)));
             startActivity(browserIntent);
         });
+
+        zoomIn.setOnClickListener(v -> updateScale(+2));
+        zoomOut.setOnClickListener(v -> updateScale(-2));
+        restore.setOnClickListener(v -> updateScale(-scale/2));
 
         toolbar.setOnMenuItemClickListener(this::onMenuItemClick);
 
@@ -149,6 +164,15 @@ public class MainActivity extends AppCompatActivity {
             public void onTabUnselected(TabLayout.Tab tab) { }
             public void onTabReselected(TabLayout.Tab tab) { }
         });
+    }
+
+    public void updateScale(int delta) {
+        scale += delta * 2;
+        editor.putInt(SCALE, scale);
+        editor.apply();
+        zoomIn.setEnabled(scale <= 12);
+        zoomOut.setEnabled(scale >= -8);
+        next();
     }
 
     @Override
@@ -172,10 +196,11 @@ public class MainActivity extends AppCompatActivity {
         }
         
         commentPlaceholder.setText(TasksManager.getComment(task, category.getTaskType()));
+        commentPlaceholder.setTextSize(TypedValue.COMPLEX_UNIT_SP, 26 + scale);
         wordPlaceholder.removeAllViews();
         madeMistake = false;
-        
-        for (TextView tv : TasksManager.getTextViews(this, task, category.getTaskType()))
+
+        for (TextView tv : TasksManager.getTextViews(this, task, category.getTaskType(), scale))
             wordPlaceholder.addView(tv, layoutParams);
     }
 

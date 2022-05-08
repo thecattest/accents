@@ -26,7 +26,7 @@ public class TasksManager {
     }
 
     public static ArrayList<TextView> getTextViews(MainActivity mainActivity,
-                                                   String task, int taskType) {
+                                                   String task, int taskType, int scale) {
         ArrayList<TextView> textViews = new ArrayList<>();
         if (taskType == Category.TASK_TYPE_ACCENTS) {
             String word = task;
@@ -38,38 +38,38 @@ public class TasksManager {
                 boolean clickable = "аеиоуэюяы".contains(lower);
                 boolean correct = Character.isUpperCase(c) && clickable;
                 textViews.add(
-                        createTextView(mainActivity, lower,
+                        createTextView(mainActivity, lower, scale,
                                 task, clickable, correct)
                 );
             }
         } else if (taskType == Category.TASK_TYPE_ENDINGS) {
             String[] parts = task.substring(0, task.length() - 1).split("\\(");
-            textViews.add(createTextView(mainActivity, parts[0] + "("));
+            textViews.add(createTextView(mainActivity, parts[0] + "(", scale));
             String[] optionsArray = parts[1].split("/");
             ArrayList<String> options = new ArrayList<>(Arrays.asList(optionsArray));
             Collections.sort(options);
             for (int i = 0; i < options.size(); i++) {
                 String word = options.get(i);
                 textViews.add(
-                        createTextView(mainActivity, word, task, true,
+                        createTextView(mainActivity, word, scale, task, true,
                                 optionsArray[0].equals(word))
                 );
                 if (i != options.size() - 1)
-                    textViews.add(createTextView(mainActivity, "/"));
+                    textViews.add(createTextView(mainActivity, "/", scale));
             }
-            textViews.add(createTextView(mainActivity, ")"));
+            textViews.add(createTextView(mainActivity, ")", scale));
         }
         return textViews;
     }
 
-    private static TextView createTextView(MainActivity mainActivity, String part) {
-        return createTextView(mainActivity, part, null, false, false);
+    private static TextView createTextView(MainActivity mainActivity, String part, int scale) {
+        return createTextView(mainActivity, part, scale, null, false, false);
     }
 
-    private static TextView createTextView(MainActivity mainActivity, String part, String task,
-                                    boolean clickable, boolean correct) {
+    private static TextView createTextView(MainActivity mainActivity, String part, int scale,
+                                           String task, boolean clickable, boolean correct) {
         TextView textView = new TextView(mainActivity);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 42);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 42 + scale);
         textView.setPadding(2, 0, 2, 0);
         textView.setText(part);
 

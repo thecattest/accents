@@ -20,4 +20,6 @@
     <string name="synced">Словарь синхронизирован</string>
     <string name="mistakes_forgotten">Статистика ошибок сброшена</string>
     <string name="queue_shuffled">Очередь перемешана</string>
+    <string name="zoom_in">Увеличить текст</string>
+    <string name="zoom_out">Уменьшить текст</string>
 </resources>
