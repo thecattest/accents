@@ -13,6 +13,21 @@ public class Queue {
         return tasks.getFirst();
     }
 
+    public void saveAnswer(String task, boolean madeMistake) {
+        Object mistakesObj = mistakes.get(task);
+        int mistakesCount = mistakesObj == null ? 0 : (int) mistakesObj;
+        mistakesCount = mistakesCount + (madeMistake ? 2 : -1);
+        int newWordIndex = (int)(Math.random() * 25) + 5;
+        if (mistakesCount <= 0) {
+            mistakes.remove(task);
+            newWordIndex = tasks.size() - newWordIndex;
+        } else {
+            mistakes.put(task, mistakesCount);
+        }
+        tasks.remove(task);
+        tasks.add(newWordIndex, task);
+    }
+
     public Queue sync(Category category) {
         if (!category.getHash().equals(hash)) {
             Queue newQueue = new Queue();

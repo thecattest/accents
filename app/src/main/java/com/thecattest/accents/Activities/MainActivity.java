@@ -216,6 +216,15 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             return true;
         }
+        if (itemId == R.id.shuffle_queue) {
+            category.shuffleQueue(jsonManager);
+            Toast.makeText(this, R.string.queue_shuffled, Toast.LENGTH_SHORT).show();
+            next();
+        }
+        if (itemId == R.id.forget_mistakes) {
+            category.forgetMistakes(jsonManager);
+            Toast.makeText(this, R.string.mistakes_forgotten, Toast.LENGTH_SHORT).show();
+        }
         return false;
     }
 

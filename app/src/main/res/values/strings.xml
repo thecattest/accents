@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">ЕГЭ - Русский</string>
     <string name="title">@string/app_name</string>
-    <string name="button_refresh">Синхронизировать список слов</string>
-    <string name="button_forget">Забыть ошибки</string>
     <string name="author">обновления и связь: <b>telegram</b></string>
     <string name="author_url">https://t.me/thecattests_projects</string>
     <string name="dictionary">словарь ударений: <b>ctege.info</b></string>
@@ -16,5 +14,10 @@
     <string name="task_type_navigation_accents">ударения</string>
     <string name="task_type_navigation_endings">Окончания</string>
     <string name="sync_request_error">Ошибка отправки запроса</string>
+    <string name="button_sync">Обновить словарь</string>
+    <string name="button_forget_mistakes">Сбросить статистику ошибок</string>
+    <string name="button_forget_queue">Перемешать очередь</string>
     <string name="synced">Словарь синхронизирован</string>
+    <string name="mistakes_forgotten">Статистика ошибок сброшена</string>
+    <string name="queue_shuffled">Очередь перемешана</string>
 </resources>

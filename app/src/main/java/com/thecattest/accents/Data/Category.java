@@ -7,6 +7,8 @@ import com.thecattest.accents.Managers.JSONManager;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class Category {
 
@@ -44,18 +46,7 @@ public class Category {
         Queue queue = loadQueue(jsonManager);
         if (queue == null)
             queue = syncQueue(jsonManager);
-        Object mistakesObj = queue.mistakes.get(task);
-        int mistakes = mistakesObj == null ? 0 : (int) mistakesObj;
-        mistakes = mistakes + (madeMistake ? 2 : -1);
-        int newWordIndex = (int)(Math.random() * 25) + 5;
-        if (mistakes <= 0) {
-            queue.mistakes.remove(task);
-            newWordIndex = queue.tasks.size() - newWordIndex;
-        } else {
-            queue.mistakes.put(task, mistakes);
-        }
-        queue.tasks.remove(task);
-        queue.tasks.add(newWordIndex, task);
+        queue.saveAnswer(task, madeMistake);
         saveQueue(queue, jsonManager);
     }
 
@@ -73,6 +64,25 @@ public class Category {
 
     public void saveQueue(Queue queue, JSONManager jsonManager) {
         jsonManager.writeObjectToFile(queue, getFilename());
+    }
+
+    public void shuffleQueue(JSONManager jsonManager) {
+        Queue oldQueue = loadQueue(jsonManager);
+        if (oldQueue == null)
+            return;
+        Queue newQueue = new Queue();
+        newQueue = newQueue.sync(this);
+        newQueue.mistakes = oldQueue.mistakes;
+        Collections.shuffle(newQueue.tasks);
+        saveQueue(newQueue, jsonManager);
+    }
+
+    public void forgetMistakes(JSONManager jsonManager) {
+        Queue queue = loadQueue(jsonManager);
+        if (queue == null)
+            return;
+        queue.mistakes = new HashMap<>();
+        saveQueue(queue, jsonManager);
     }
 
     public Queue syncQueue(JSONManager jsonManager) {

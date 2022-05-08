@@ -9,18 +9,30 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/refresh"
-        android:title="@string/button_refresh"
-        android:icon="@drawable/ic_sync"
-        android:contentDescription="@string/button_refresh"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/theme"
         android:title="@string/theme"
         android:icon="@drawable/ic_dark"
         android:contentDescription="@string/theme"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/refresh"
+        android:title="@string/button_sync"
+        android:icon="@drawable/ic_sync"
+        android:contentDescription="@string/button_sync"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/shuffle_queue"
+        android:title="@string/button_forget_queue"
+        android:contentDescription="@string/button_forget_queue"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/forget_mistakes"
+        android:title="@string/button_forget_mistakes"
+        android:contentDescription="@string/button_forget_mistakes"
+        app:showAsAction="never" />
 
     <!--item
         android:id="@+id/forget"
