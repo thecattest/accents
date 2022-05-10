@@ -12,6 +12,7 @@ import android.os.Vibrator;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,7 +24,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
+import com.thecattest.accents.BuildConfig;
 import com.thecattest.accents.Data.ApiService;
 import com.thecattest.accents.Data.Category;
 import com.thecattest.accents.Data.Dictionary;
@@ -56,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout root;
     private TabLayout categoriesNavigation;
     private MaterialToolbar toolbar;
+    private MaterialCardView updateAppCard;
+    private Button updateButton;
     private ImageButton zoomIn;
     private ImageButton zoomOut;
     private ImageButton restore;
@@ -128,11 +133,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void findViews() {
-        wordPlaceholder = findViewById(R.id.wordPlaceholder);
+        wordPlaceholder = findViewById(R.id.task_placeholder);
         commentPlaceholder = findViewById(R.id.extra);
         root = findViewById(R.id.root);
-        categoriesNavigation = findViewById(R.id.categoriesNavigation);
-        toolbar = findViewById(R.id.topAppBar);
+        categoriesNavigation = findViewById(R.id.categories_navigation);
+        toolbar = findViewById(R.id.top_app_bar);
+        updateAppCard = findViewById(R.id.update_app_card);
+        updateButton = findViewById(R.id.update_button);
         zoomIn = findViewById(R.id.zoom_in);
         zoomOut = findViewById(R.id.zoom_out);
         restore = findViewById(R.id.zoom_restore);
@@ -145,6 +152,10 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.dictionary).setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.dictionary_url)));
+            startActivity(browserIntent);
+        });
+        updateButton.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.update_app_url)));
             startActivity(browserIntent);
         });
 
@@ -265,6 +276,10 @@ public class MainActivity extends AppCompatActivity {
                     dictionary.sync(jsonManager);
                     initCategoriesNavigation();
                     next();
+                    if (!BuildConfig.VERSION_NAME.equals(dictionary.version))
+                        updateAppCard.setVisibility(View.VISIBLE);
+                    else
+                        updateAppCard.setVisibility(View.INVISIBLE);
                     Toast.makeText(MainActivity.this, R.string.synced, Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     Toast.makeText(MainActivity.this, R.string.ioexception, Toast.LENGTH_SHORT).show();

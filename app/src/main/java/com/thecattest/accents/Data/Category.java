@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 
 import com.thecattest.accents.Managers.JSONManager;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +29,10 @@ public class Category {
     public int getTaskType() { return taskType; }
 
     public ArrayList<String> getTasks() { return tasks; }
+
+    public boolean isSupported() {
+        return taskType == TASK_TYPE_ACCENTS || taskType == TASK_TYPE_ENDINGS;
+    }
 
     public String getFilename() {
         return getId() + ".json";

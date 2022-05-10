@@ -33,7 +33,7 @@ public class WordsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_words_list);
 
-        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
+        MaterialToolbar toolbar = findViewById(R.id.top_app_bar);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         wordsListView = findViewById(R.id.wordsListView);

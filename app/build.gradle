@@ -9,8 +9,8 @@ android {
         applicationId "com.thecattest.accents"
         minSdk 21
         targetSdk 31
-        versionCode 10
-        versionName "3.3"
+        versionCode 11
+        versionName "3.3.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

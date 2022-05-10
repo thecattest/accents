@@ -8,11 +8,9 @@
     <string name="back_again_to_exit">Нажмите ещё раз, чтобы выйти</string>
     <string name="ioexception">Ошибка чтения или записи в файлы. Свяжитесь с разработчиком</string>
     <string name="button_words_list">Список слов</string>
+    <string name="button_update">Обновить</string>
     <string name="search_hint">Поиск</string>
-    <string name="title_activity_settings">SettingsActivity</string>
     <string name="theme">Сменить тему</string>
-    <string name="task_type_navigation_accents">ударения</string>
-    <string name="task_type_navigation_endings">Окончания</string>
     <string name="sync_request_error">Ошибка отправки запроса</string>
     <string name="button_sync">Обновить словарь</string>
     <string name="button_forget_mistakes">Сбросить статистику ошибок</string>
@@ -22,4 +20,7 @@
     <string name="queue_shuffled">Очередь перемешана</string>
     <string name="zoom_in">Увеличить текст</string>
     <string name="zoom_out">Уменьшить текст</string>
+    <string name="update_app_url">https://t.me/thecattests_projects</string>
+    <string name="update_available">Доступно обновление!</string>
+    <string name="some_categories_unavailable">Обновите приложение, чтобы иметь доступ к самым новым функциям и видеть категории новых типов</string>
 </resources>
