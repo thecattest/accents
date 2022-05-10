@@ -1,4 +1,4 @@
 #!/bin/bash
 python generate.py "$2"
-git commit dictionary3.json -m "$1"
+git commit -am "$1"
 git push
