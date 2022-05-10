@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
                     dictionary.sync(jsonManager);
                     initCategoriesNavigation();
                     next();
-                    if (!BuildConfig.VERSION_NAME.equals(dictionary.version))
+                    if (BuildConfig.VERSION_CODE != dictionary.version)
                         updateAppCard.setVisibility(View.VISIBLE);
                     else
                         updateAppCard.setVisibility(View.INVISIBLE);

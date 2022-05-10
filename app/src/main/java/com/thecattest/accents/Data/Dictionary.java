@@ -12,7 +12,7 @@ public class Dictionary {
     public static final String SYNC_URL = "/thecattest/accents/dictionary/dictionary3.json";
 
     public ArrayList<Category> categories;
-    public String version = "";
+    public int version;
 
     public Category getCategory(String title) {
         for (Category category : categories)
